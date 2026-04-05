@@ -4,7 +4,7 @@ export function securityHeaders(): HeadersInit {
   return {
     'Content-Type': 'application/json',
     'Content-Security-Policy':
-      "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src https://sussition.com; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'no-referrer',

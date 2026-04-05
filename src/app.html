@@ -429,9 +429,7 @@
   <div class="header-inner">
     <a class="title" href="/"><h2>Secure Share</h2></a>
     <nav>
-      <a href="https://sussition.com">@sussition</a>
       <a href="https://sussition.com/blog">Blog</a>
-      <a href="https://sussition.com/contact">Contact</a>
     </nav>
   </div>
 </header>
@@ -501,7 +499,7 @@ function route() {
 function renderCreate() {
   app.innerHTML = `
     <h1>Share a secret</h1>
-    <p class="subtitle">Your message is locked with a key that only exists in the link — we never see it. Even if someone broke into the server, there's nothing to read.</p>
+    <p class="subtitle">AES-256 encrypted in your browser. The decryption key lives only in the link — the server stores ciphertext and nothing else.</p>
 
     <label for="plaintext">Secret text</label>
     <textarea id="plaintext" placeholder="Paste your secret here…" autofocus spellcheck="false"></textarea>
@@ -649,9 +647,18 @@ function renderReveal(id, hash) {
       const data = await res.json();
 
       if (!res.ok) {
-        showError('revealError', apiErrorMsg(data.error));
-        btn.disabled = false;
-        btn.innerHTML = 'Reveal Secret';
+        if (res.status === 404 || res.status === 410) {
+          document.getElementById('revealCard').innerHTML = `
+            <span class="reveal-icon">🔥</span>
+            <h2>Secret no longer exists</h2>
+            <p>It was either already read, expired, or never existed.</p>
+            <a class="btn btn-secondary" href="/">Share a new secret</a>
+          `;
+        } else {
+          showError('revealError', apiErrorMsg(data.error));
+          btn.disabled = false;
+          btn.innerHTML = 'Reveal Secret';
+        }
         return;
       }
 
