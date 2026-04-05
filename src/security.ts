@@ -16,7 +16,7 @@ export function securityHeaders(): HeadersInit {
 
 export function htmlHeaders(): HeadersInit {
   const headers = securityHeaders() as Record<string, string>;
-  return { ...headers, 'Content-Type': 'text/html; charset=utf-8' };
+  return { ...headers, 'Content-Type': 'text/html; charset=utf-8', 'CF-No-Insights': '1' };
 }
 
 export async function checkRateLimit(
