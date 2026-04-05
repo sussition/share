@@ -1,55 +1,41 @@
-import type { Env, StoredSecret } from '../types';
+import type { Env } from '../types';
 import { securityHeaders, checkRateLimit } from '../security';
+import { getSecret } from '../kv';
 
 export async function handleRetrieve(id: string, env: Env, request: Request): Promise<Response> {
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   if (!(await checkRateLimit(ip, env, 'retrieve', 30))) {
     return new Response(JSON.stringify({ error: 'rate_limited' }), {
-      status: 429,
-      headers: securityHeaders(),
+      status: 429, headers: securityHeaders(),
     });
   }
 
-  const raw = await env.SECRETS.get(`secret:${id}`);
-  if (!raw) {
-    return new Response(JSON.stringify({ error: 'not_found' }), {
-      status: 404,
-      headers: securityHeaders(),
+  const result = await getSecret(id, env);
+  if (!result.ok) {
+    const error = result.status === 410 ? 'expired' : 'not_found';
+    return new Response(JSON.stringify({ error }), {
+      status: result.status, headers: securityHeaders(),
     });
   }
 
-  const stored: StoredSecret = JSON.parse(raw);
+  const { stored, key } = result;
   const now = Math.floor(Date.now() / 1000);
-
-  if (now >= stored.e) {
-    await env.SECRETS.delete(`secret:${id}`);
-    return new Response(JSON.stringify({ error: 'expired' }), {
-      status: 410,
-      headers: securityHeaders(),
-    });
-  }
-
   let remaining: number;
 
   if (stored.v === 1) {
-    // Last view — delete
-    await env.SECRETS.delete(`secret:${id}`);
+    await env.SECRETS.delete(key);
     remaining = 0;
   } else if (stored.v > 1) {
-    // Decrement and write back with remaining TTL
     stored.v--;
     remaining = stored.v;
-    const remainingTtl = stored.e - now;
-    await env.SECRETS.put(`secret:${id}`, JSON.stringify(stored), {
-      expirationTtl: remainingTtl,
+    await env.SECRETS.put(key, JSON.stringify(stored), {
+      expirationTtl: stored.e - now,
     });
   } else {
-    // v === -1, unlimited
     remaining = -1;
   }
 
   return new Response(JSON.stringify({ c: stored.c, remaining }), {
-    status: 200,
-    headers: securityHeaders(),
+    status: 200, headers: securityHeaders(),
   });
 }

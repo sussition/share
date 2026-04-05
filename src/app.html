@@ -9,6 +9,11 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://sussition.com/img/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://sussition.com/img/apple-touch-icon.png">
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
   <!-- Primary -->
   <meta name="title" content="Secure Share | @sussition">
   <meta name="description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
@@ -27,245 +32,333 @@
   <meta name="twitter:title" content="Secure Share | @sussition">
   <meta name="twitter:description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
   <meta name="twitter:image" content="https://sussition.com/img/share.png">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #faf8f5;
-      --surface: #f3f0eb;
-      --border: #e2ddd6;
-      --text: #1a1714;
-      --muted: #7a726a;
-      --accent: #c6572a;
-      --accent-hover: #b04d25;
-      --danger: #c0392b;
-      --success: #2e7d32;
-      --radius: 6px;
-      --width: 720px;
+      --bg:           #faf8f5;
+      --text:         #2c2c2c;
+      --heading:      #1a1a1a;
+      --accent:       #c6572a;
+      --accent-hover: #a84820;
+      --surface:      #f0ece6;
+      --surface-2:    #e8e2d9;
+      --border:       #e0dcd4;
+      --muted:        #7a756d;
+      --danger:       #c0392b;
+      --success:      #2e7d32;
+      --radius:       4px;
+      --width:        680px;
+      --font-body:    'IBM Plex Sans', -apple-system, sans-serif;
+      --font-mono:    'DM Mono', 'Courier New', monospace;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #111318;
-        --surface: #1c1f26;
-        --border: #2a2d35;
-        --text: #e8e4de;
-        --muted: #8a8480;
-        --accent: #e09145;
-        --accent-hover: #c97c35;
-        --danger: #e05252;
-        --success: #52a852;
+        --bg:           #111318;
+        --text:         #c5c8ce;
+        --heading:      #e4e6ea;
+        --accent:       #e09145;
+        --accent-hover: #eba05e;
+        --surface:      #1a1d24;
+        --surface-2:    #22262f;
+        --border:       #2a2d35;
+        --muted:        #6b7080;
+        --danger:       #e05252;
+        --success:      #52a852;
       }
     }
 
-    html, body {
-      height: 100%;
+    ::selection { background: rgba(198, 87, 42, 0.18); }
+    @media (prefers-color-scheme: dark) {
+      ::selection { background: rgba(224, 145, 69, 0.22); }
+    }
+
+    /* ── Grain overlay ─────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Base ──────────────────────────────────────────── */
+    html {
+      border-top: 3px solid var(--accent);
       background: var(--bg);
-      color: var(--text);
-      font-family: Verdana, sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
     }
 
     body {
+      font-family: var(--font-body);
+      font-size: 1em;
+      line-height: 1.72;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
     }
 
-    header {
-      border-top: 3px solid var(--accent);
-      padding: 20px 24px 0;
+    h1, h2, h3 {
+      font-family: var(--font-mono);
+      color: var(--heading);
+      font-weight: 500;
+      line-height: 1.3;
     }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    a:hover { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── Header ────────────────────────────────────────── */
+    header { padding: 0 24px; }
 
     .header-inner {
       max-width: var(--width);
       margin: 0 auto;
-      padding: 16px 0 20px;
-      border-bottom: 1px solid var(--border);
+      padding: 1.1em 0 0;
     }
 
     .header-inner a.title {
+      display: inline-block;
       text-decoration: none;
-      color: var(--text);
+      color: var(--heading);
     }
+
+    .header-inner a.title:hover { text-decoration: none; }
 
     .header-inner a.title h2 {
-      font-size: 1.1em;
-      font-weight: bold;
-      display: inline;
+      font-family: var(--font-mono);
+      font-size: 1.15em;
+      font-weight: 500;
+      margin: 0;
+      color: var(--heading);
+      line-height: 1;
     }
 
-    .header-inner a.title:hover h2 {
-      text-decoration: underline;
+.prompt-caret {
+      color: var(--accent);
+      display: inline-block;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .header-inner a.title:hover .prompt-caret {
+      transform: translateX(5px);
     }
 
     .header-inner nav {
-      margin-top: 6px;
+      margin-top: 0.75em;
+      padding-bottom: 1.4em;
+      border-bottom: 1px solid var(--border);
     }
 
     .header-inner nav a {
-      font-size: 14px;
-      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.76em;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-right: 1.5em;
+      color: var(--muted);
       text-decoration: none;
-      margin-right: 12px;
+      transition: color 0.15s;
     }
 
-    .header-inner nav a:hover {
-      text-decoration: underline;
+    .header-inner nav a:hover { color: var(--accent); text-decoration: none; }
+
+    /* ── Main ──────────────────────────────────────────── */
+    main { flex: 1; padding: 44px 24px 24px; }
+
+    .container { max-width: var(--width); margin: 0 auto; }
+
+    /* ── Page load stagger ─────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    main {
-      flex: 1;
-      padding: 40px 24px;
-    }
+    #app > h1              { animation: fadeUp 0.4s ease 0.04s both; }
+    #app > .subtitle       { animation: fadeUp 0.4s ease 0.10s both; }
+    #app > label           { animation: fadeUp 0.4s ease 0.16s both; }
+    #app > textarea        { animation: fadeUp 0.4s ease 0.20s both; }
+    #app > .options        { animation: fadeUp 0.4s ease 0.26s both; }
+    #app > .btn-primary    { animation: fadeUp 0.4s ease 0.32s both; }
+    #app > .reveal-card    { animation: fadeUp 0.45s ease 0.06s both; }
+    #app > .plaintext-section { animation: fadeUp 0.4s ease 0.06s both; }
 
-    .container {
-      max-width: var(--width);
-      margin: 0 auto;
-    }
-
+    /* ── Typography ────────────────────────────────────── */
     h1 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
+      font-size: 1.55em;
+      margin-bottom: 0.35em;
     }
 
     .subtitle {
-      font-size: 14px;
       color: var(--muted);
-      margin-bottom: 28px;
+      margin-bottom: 2em;
+      font-size: 0.97em;
+      line-height: 1.65;
     }
 
+    /* ── Labels ────────────────────────────────────────── */
     label {
       display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 6px;
-      letter-spacing: 0.02em;
+      font-family: var(--font-mono);
+      font-size: 0.72em;
       text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 0.55em;
     }
 
+    /* ── Textarea ──────────────────────────────────────── */
     textarea {
       width: 100%;
-      min-height: 180px;
+      min-height: 190px;
       padding: 12px 14px;
       background: var(--surface);
       border: 1px solid var(--border);
+      border-left: 3px solid transparent;
       border-radius: var(--radius);
       color: var(--text);
-      font-family: 'Courier New', 'Menlo', 'Monaco', monospace;
-      font-size: 13px;
-      line-height: 1.6;
+      font-family: var(--font-mono);
+      font-size: 0.84em;
+      line-height: 1.7;
       resize: vertical;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     textarea:focus {
-      border-color: var(--accent);
+      border-left-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(198, 87, 42, 0.08);
     }
 
-    textarea[readonly] {
-      cursor: default;
-      opacity: 0.9;
+    @media (prefers-color-scheme: dark) {
+      textarea:focus { box-shadow: 0 0 0 3px rgba(224, 145, 69, 0.1); }
     }
 
+    textarea[readonly] { cursor: default; opacity: 0.9; }
+
+    textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+    /* ── Options grid ──────────────────────────────────── */
     .options {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 16px 0 24px;
+      gap: 14px;
+      margin: 1.1em 0 1.6em;
     }
 
     .field { display: flex; flex-direction: column; }
 
+    /* ── Select ────────────────────────────────────────── */
     select {
-      padding: 8px 10px;
+      padding: 9px 12px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--text);
-      font-size: 14px;
+      font-family: var(--font-body);
+      font-size: 0.93em;
       outline: none;
       cursor: pointer;
-      transition: border-color 0.15s;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8480' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a756d' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
+      background-position: right 11px center;
       padding-right: 30px;
+      transition: border-color 0.15s;
     }
 
-    select:focus { border-color: var(--accent); }
+    select:focus { outline: none; border-color: var(--accent); }
+    select:hover { border-color: var(--accent); }
 
+    /* ── Buttons ───────────────────────────────────────── */
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border: none;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border: 1px solid transparent;
       border-radius: var(--radius);
-      font-size: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.82em;
+      letter-spacing: 0.03em;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.15s, opacity 0.15s;
-      font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+      text-decoration: none;
+      white-space: nowrap;
     }
+
+    .btn:active { transform: scale(0.97); }
 
     .btn-primary {
       background: var(--accent);
       color: #fff;
+      border-color: var(--accent);
     }
 
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; text-decoration: none; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
     .btn-secondary {
-      background: var(--surface);
+      background: transparent;
       color: var(--text);
-      border: 1px solid var(--border);
+      border-color: var(--border);
     }
 
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 
     .btn-ghost {
       background: none;
       color: var(--muted);
-      padding: 8px 14px;
-      font-size: 13px;
+      border-color: transparent;
+      font-size: 0.8em;
     }
 
-    .btn-ghost:hover { color: var(--text); }
+    .btn-ghost:hover { color: var(--heading); text-decoration: none; }
 
-    /* Result box */
+    /* ── Result box ────────────────────────────────────── */
     .result-box {
-      margin-top: 28px;
-      padding: 20px;
+      margin-top: 2em;
+      padding: 18px 20px;
       background: var(--surface);
       border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
       border-radius: var(--radius);
       display: none;
     }
 
-    .result-box.visible { display: block; }
+    .result-box.visible {
+      display: block;
+      animation: slideDown 0.3s ease both;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     .result-label {
-      font-size: 12px;
-      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 0.7em;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.12em;
       color: var(--muted);
       margin-bottom: 10px;
     }
 
-    .url-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+    .url-row { display: flex; gap: 8px; align-items: stretch; }
 
     .url-display {
       flex: 1;
@@ -273,153 +366,174 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.78em;
       color: var(--text);
       word-break: break-all;
-      line-height: 1.5;
-    }
-
-    .copy-btn {
-      white-space: nowrap;
+      line-height: 1.55;
     }
 
     .warning {
-      margin-top: 12px;
-      font-size: 12px;
+      margin-top: 11px;
+      font-size: 0.82em;
       color: var(--muted);
       display: flex;
       align-items: flex-start;
-      gap: 6px;
+      gap: 7px;
+      font-family: var(--font-mono);
     }
 
-    .warning::before {
-      content: '⚠';
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
+    .warning::before { content: '//'; flex-shrink: 0; color: var(--accent); opacity: 0.7; }
 
-    /* Reveal mode */
+    /* ── Reveal card ───────────────────────────────────── */
     .reveal-card {
-      padding: 32px;
+      padding: 3.5em 2.5em;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .reveal-icon {
-      font-size: 40px;
-      margin-bottom: 16px;
+    /* Decorative corner marks */
+    .reveal-card::before,
+    .reveal-card::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--accent);
+      border-style: solid;
+      opacity: 0.35;
+    }
+
+    .reveal-card::before {
+      top: 14px; left: 14px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .reveal-card::after {
+      bottom: 14px; right: 14px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .lock-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 1.4em;
+      color: var(--accent);
       display: block;
+      animation: lock-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes lock-pulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.06); }
     }
 
     .reveal-card h2 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-size: 1.3em;
+      margin-bottom: 0.6em;
+      margin-top: 0;
     }
 
     .reveal-card p {
-      font-size: 14px;
       color: var(--muted);
-      margin-bottom: 24px;
-      max-width: 360px;
+      margin-bottom: 1.8em;
+      max-width: 340px;
       margin-left: auto;
       margin-right: auto;
+      font-size: 0.95em;
+      line-height: 1.6;
     }
 
-    .meta-row {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
-
-    .meta-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 10px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-    }
-
-    /* Error / status */
+    /* ── Status messages ───────────────────────────────── */
     .status {
-      padding: 12px 16px;
+      padding: 11px 14px;
       border-radius: var(--radius);
-      font-size: 14px;
-      margin-top: 20px;
+      font-size: 0.88em;
+      margin-top: 1.2em;
       display: none;
+      border-left: 3px solid;
+      font-family: var(--font-mono);
     }
 
-    .status.visible { display: block; }
-
-    .status-error {
-      background: color-mix(in srgb, var(--danger) 10%, transparent);
-      border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
-      color: var(--danger);
+    .status.visible {
+      display: block;
+      animation: slideDown 0.25s ease both;
     }
 
-    .status-success {
-      background: color-mix(in srgb, var(--success) 10%, transparent);
-      border: 1px solid color-mix(in srgb, var(--success) 30%, transparent);
-      color: var(--success);
-    }
+    .status-error  { background: color-mix(in srgb, var(--danger) 7%, var(--bg));  border-color: var(--danger);  color: var(--danger); }
+    .status-success{ background: color-mix(in srgb, var(--success) 7%, var(--bg)); border-color: var(--success); color: var(--success); }
 
-    .plaintext-section {
-      margin-top: 24px;
-      display: none;
+    /* ── Plaintext section ─────────────────────────────── */
+    .plaintext-section { margin-top: 1.5em; display: none; }
+    .plaintext-section.visible {
+      display: block;
+      animation: fadeUp 0.35s ease both;
     }
-
-    .plaintext-section.visible { display: block; }
 
     .remaining-note {
-      margin-top: 12px;
-      font-size: 13px;
+      margin-top: 0.9em;
+      font-size: 0.82em;
       color: var(--muted);
+      font-family: var(--font-mono);
     }
 
     .remaining-note strong { color: var(--text); }
 
-    .actions-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
+    .actions-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.1em; }
 
+    /* ── Footer ────────────────────────────────────────── */
     footer {
-      padding: 24px;
-      border-top: 1px solid var(--border);
+      padding: 2em 24px;
       text-align: center;
-      font-size: 12px;
-      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 2em;
     }
 
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--text); }
+    footer a {
+      font-family: var(--font-mono);
+      font-size: 0.75em;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      margin: 0 0.8em;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
 
+    footer a:hover { color: var(--accent); text-decoration: none; }
+
+    /* ── Spinner ───────────────────────────────────────── */
     .spinner {
       display: inline-block;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff;
       border-radius: 50%;
-      animation: spin 0.6s linear infinite;
+      animation: spin 0.55s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* ── Keyframes ─────────────────────────────────────── */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 480px) {
+    /* ── Mobile ────────────────────────────────────────── */
+    @media (max-width: 560px) {
       .options { grid-template-columns: 1fr; }
-      .url-row { flex-direction: column; align-items: stretch; }
-      main { padding: 24px 16px; }
+      .url-row { flex-direction: column; }
+      main { padding: 28px 16px 20px; }
+      header { padding: 0 16px; }
+      footer { padding: 1.5em 16px; }
+      .reveal-card { padding: 2.5em 1.5em; }
     }
   </style>
 </head>
@@ -427,7 +541,7 @@
 
 <header>
   <div class="header-inner">
-    <a class="title" href="/"><h2>Secure Share</h2></a>
+    <a class="title" href="/"><h2><span class="prompt-caret">&gt;</span> Secure Share</h2></a>
     <nav>
       <a href="https://sussition.com/blog">Blog</a>
     </nav>
@@ -439,8 +553,11 @@
 </main>
 
 <footer>
-  <a href="https://sussition.com">sussition.com</a> &nbsp;·&nbsp;
-  <a href="https://github.com/sussition/share" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;"><svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Open source</a>
+  <a href="https://sussition.com">sussition.com</a>
+  <a href="https://github.com/sussition/share" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;">
+    <svg height="13" width="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    Open source
+  </a>
 </footer>
 
 <script>
@@ -496,6 +613,32 @@ function route() {
 
 // ─── Create mode ─────────────────────────────────────────────────────────────
 
+const LOCK_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+
+function showGoneCard() {
+  document.getElementById('revealCard').innerHTML = `
+    <span style="font-size:2.5em;display:block;margin-bottom:1em">🔥</span>
+    <h2>Secret no longer exists</h2>
+    <p>It was either already read, expired, or never existed.</p>
+    <a class="btn btn-secondary" href="/">Share a new secret</a>
+  `;
+}
+
+async function copyToClipboard(text, btn, resetLabel) {
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = resetLabel; }, 2000);
+  } catch {
+    const range = document.createRange();
+    range.selectNodeContents(btn.parentElement);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  }
+}
+
+const LOCK_LG_SVG = `<svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+
 function renderCreate() {
   app.innerHTML = `
     <h1>Share a secret</h1>
@@ -517,7 +660,7 @@ function renderCreate() {
       <div class="field">
         <label for="views">Max views</label>
         <select id="views">
-          <option value="1" selected>1 (burn after read)</option>
+          <option value="1" selected>1 — burn after read</option>
           <option value="3">3</option>
           <option value="5">5</option>
           <option value="10">10</option>
@@ -527,14 +670,14 @@ function renderCreate() {
     </div>
 
     <button class="btn btn-primary" id="encryptBtn">
-      Encrypt &amp; Share
+      ${LOCK_SVG} Encrypt &amp; Share
     </button>
 
     <div class="result-box" id="resultBox">
       <div class="result-label">Share link</div>
       <div class="url-row">
         <div class="url-display" id="shareUrl"></div>
-        <button class="btn btn-secondary copy-btn" id="copyBtn">Copy</button>
+        <button class="btn btn-secondary" id="copyBtn">Copy</button>
       </div>
       <p class="warning">Anyone with this link can read the secret. Share it carefully.</p>
     </div>
@@ -575,50 +718,37 @@ function renderCreate() {
       const shareUrl = `${location.origin}/s/${data.id}#key=${key}`;
       document.getElementById('shareUrl').textContent = shareUrl;
       document.getElementById('resultBox').classList.add('visible');
-
-      // Clear textarea so plaintext isn't hanging around in the DOM
       document.getElementById('plaintext').value = '';
 
     } catch (e) {
       showError('createError', 'Something went wrong. Please try again.');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = 'Encrypt &amp; Share';
+      btn.innerHTML = `${LOCK_SVG} Encrypt &amp; Share`;
     }
   });
 
   document.getElementById('copyBtn').addEventListener('click', async () => {
-    const url = document.getElementById('shareUrl').textContent;
-    try {
-      await navigator.clipboard.writeText(url);
-      const btn = document.getElementById('copyBtn');
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
-    } catch {
-      // Fallback: select text
-      const range = document.createRange();
-      range.selectNode(document.getElementById('shareUrl'));
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(range);
-    }
+    const btn = document.getElementById('copyBtn');
+    await copyToClipboard(document.getElementById('shareUrl').textContent, btn, 'Copy');
   });
 }
 
 // ─── Reveal mode ─────────────────────────────────────────────────────────────
 
-function renderReveal(id, hash) {
+async function renderReveal(id, hash) {
   const keyMatch = hash.match(/[#&]key=([a-zA-Z0-9_-]+)/);
   const keyStr = keyMatch ? keyMatch[1] : null;
 
   app.innerHTML = `
     <div class="reveal-card" id="revealCard">
-      <span class="reveal-icon">🔒</span>
+      ${LOCK_LG_SVG}
       <h2>You have a secret</h2>
       <p>Clicking Reveal will decrypt and display the message. This action may consume a view.</p>
-      <button class="btn btn-primary" id="revealBtn" ${!keyStr ? 'disabled' : ''}>
-        Reveal Secret
+      <button class="btn btn-primary" id="revealBtn" disabled>
+        <span class="spinner"></span> Checking…
       </button>
-      ${!keyStr ? '<div class="status status-error visible" style="margin-top:16px">Missing decryption key. The link may be incomplete.</div>' : ''}
+      ${!keyStr ? '<div class="status status-error visible" style="margin-top:1.2em">Missing decryption key. The link may be incomplete.</div>' : ''}
     </div>
 
     <div class="plaintext-section" id="plaintextSection">
@@ -636,6 +766,21 @@ function renderReveal(id, hash) {
 
   if (!keyStr) return;
 
+  // Pre-check existence without consuming a view
+  try {
+    const metaRes = await fetch(`/api/secrets/${id}/meta`);
+    if (metaRes.status === 404 || metaRes.status === 410) {
+      showGoneCard();
+      return;
+    }
+  } catch {
+    // Network error — let user try anyway
+  }
+
+  const btn = document.getElementById('revealBtn');
+  btn.disabled = false;
+  btn.innerHTML = 'Reveal Secret';
+
   document.getElementById('revealBtn').addEventListener('click', async () => {
     const btn = document.getElementById('revealBtn');
     btn.disabled = true;
@@ -648,12 +793,7 @@ function renderReveal(id, hash) {
 
       if (!res.ok) {
         if (res.status === 404 || res.status === 410) {
-          document.getElementById('revealCard').innerHTML = `
-            <span class="reveal-icon">🔥</span>
-            <h2>Secret no longer exists</h2>
-            <p>It was either already read, expired, or never existed.</p>
-            <a class="btn btn-secondary" href="/">Share a new secret</a>
-          `;
+          showGoneCard();
         } else {
           showError('revealError', apiErrorMsg(data.error));
           btn.disabled = false;
@@ -690,15 +830,8 @@ function renderReveal(id, hash) {
   });
 
   document.getElementById('copyPlainBtn').addEventListener('click', async () => {
-    const text = document.getElementById('plaintextOut').value;
-    try {
-      await navigator.clipboard.writeText(text);
-      const btn = document.getElementById('copyPlainBtn');
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy text'; }, 2000);
-    } catch {
-      document.getElementById('plaintextOut').select();
-    }
+    const btn = document.getElementById('copyPlainBtn');
+    await copyToClipboard(document.getElementById('plaintextOut').value, btn, 'Copy text');
   });
 }
 
