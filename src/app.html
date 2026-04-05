@@ -3,7 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Share — Sussition</title>
+  <title>Secure Share — Sussition</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://sussition.com/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://sussition.com/img/apple-touch-icon.png">
+
+  <!-- Primary -->
+  <meta name="title" content="Secure Share — Sussition">
+  <meta name="description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://share.sussition.com">
+  <meta property="og:site_name" content="@sussition">
+  <meta property="og:title" content="Secure Share — Sussition">
+  <meta property="og:description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
+  <meta property="og:image" content="https://sussition.com/img/share.png">
+  <meta property="og:locale" content="en_us">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Secure Share — Sussition">
+  <meta name="twitter:description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
+  <meta name="twitter:image" content="https://sussition.com/img/share.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,7 +41,7 @@
       --danger: #c0392b;
       --success: #2e7d32;
       --radius: 6px;
-      --width: 680px;
+      --width: 720px;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -39,7 +62,7 @@
       height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-family: Verdana, sans-serif;
       font-size: 15px;
       line-height: 1.6;
     }
@@ -58,28 +81,38 @@
     .header-inner {
       max-width: var(--width);
       margin: 0 auto;
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
       padding: 16px 0 20px;
       border-bottom: 1px solid var(--border);
     }
 
-    .logo {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--text);
+    .header-inner a.title {
       text-decoration: none;
+      color: var(--text);
     }
 
-    .logo span {
+    .header-inner a.title h2 {
+      font-size: 1.1em;
+      font-weight: bold;
+      display: inline;
+    }
+
+    .header-inner a.title:hover h2 {
+      text-decoration: underline;
+    }
+
+    .header-inner nav {
+      margin-top: 6px;
+    }
+
+    .header-inner nav a {
+      font-size: 14px;
       color: var(--accent);
+      text-decoration: none;
+      margin-right: 12px;
     }
 
-    .tagline {
-      font-size: 13px;
-      color: var(--muted);
+    .header-inner nav a:hover {
+      text-decoration: underline;
     }
 
     main {
@@ -394,8 +427,12 @@
 
 <header>
   <div class="header-inner">
-    <a class="logo" href="/">Sussition <span>Share</span></a>
-    <span class="tagline">Zero-knowledge encrypted sharing</span>
+    <a class="title" href="/"><h2>Secure Share</h2></a>
+    <nav>
+      <a href="https://sussition.com">@sussition</a>
+      <a href="https://sussition.com/blog">Blog</a>
+      <a href="https://sussition.com/contact">Contact</a>
+    </nav>
   </div>
 </header>
 
