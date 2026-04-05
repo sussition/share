@@ -1,0 +1,23 @@
+name = "share-sussition"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+account_id = "bb30318491cd15a65c4b819339de5256"
+
+routes = [
+  { pattern = "share.sussition.com", custom_domain = true }
+]
+
+[vars]
+MAX_PAYLOAD_BYTES = "262144"
+MAX_TTL_SECONDS = "604800"
+MAX_VIEWS = "100"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = false
+
+[[kv_namespaces]]
+binding = "SECRETS"
+id = "f26753df3c7d4602b4516d3cae5c89ec"
+preview_id = "4f6b87947cfd4b8692fe01ebb5a394d9"
