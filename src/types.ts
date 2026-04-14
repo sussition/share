@@ -17,12 +17,14 @@ export interface CreateRequest {
   ttl: number; // seconds: 300-604800
 }
 
-export interface CreateResponse {
-  id: string;
-  expires: number;
+export interface StoredLink {
+  u: string;   // target URL
+  t: number;   // created at (unix seconds)
+  c: number;   // click count
 }
 
-export interface RetrieveResponse {
-  c: string;
-  remaining: number;
+export interface CreateLinkRequest {
+  url: string;       // target URL (required, must be http/https)
+  slug?: string;     // custom slug (optional, 3-32 chars, alphanumeric + hyphens)
 }
+

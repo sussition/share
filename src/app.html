@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Share | @sussition</title>
+  <title>Share | @sussition</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://sussition.com/img/favicon.png">
@@ -15,22 +15,22 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Primary -->
-  <meta name="title" content="Secure Share | @sussition">
-  <meta name="description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
+  <meta name="title" content="Share | @sussition">
+  <meta name="description" content="Zero-knowledge encrypted secret sharing and link shortening. Share secrets securely or create short, memorable URLs.">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://share.sussition.com">
   <meta property="og:site_name" content="@sussition">
-  <meta property="og:title" content="Secure Share | @sussition">
-  <meta property="og:description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
+  <meta property="og:title" content="Share | @sussition">
+  <meta property="og:description" content="Zero-knowledge encrypted secret sharing and link shortening. Share secrets securely or create short, memorable URLs.">
   <meta property="og:image" content="https://sussition.com/img/share.png">
   <meta property="og:locale" content="en_us">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Secure Share | @sussition">
-  <meta name="twitter:description" content="Zero-knowledge encrypted secret sharing. Your message is locked with a key that only exists in the link — the server never sees it.">
+  <meta name="twitter:title" content="Share | @sussition">
+  <meta name="twitter:description" content="Zero-knowledge encrypted secret sharing and link shortening. Share secrets securely or create short, memorable URLs.">
   <meta name="twitter:image" content="https://sussition.com/img/share.png">
 
   <style>
@@ -185,11 +185,14 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    #app > .mode-tabs      { animation: fadeUp 0.4s ease 0.02s both; }
     #app > h1              { animation: fadeUp 0.4s ease 0.04s both; }
     #app > .subtitle       { animation: fadeUp 0.4s ease 0.10s both; }
     #app > label           { animation: fadeUp 0.4s ease 0.16s both; }
     #app > textarea        { animation: fadeUp 0.4s ease 0.20s both; }
+    #app > input           { animation: fadeUp 0.4s ease 0.20s both; }
     #app > .options        { animation: fadeUp 0.4s ease 0.26s both; }
+    #app > .slug-field     { animation: fadeUp 0.4s ease 0.26s both; }
     #app > .btn-primary    { animation: fadeUp 0.4s ease 0.32s both; }
     #app > .reveal-card    { animation: fadeUp 0.45s ease 0.06s both; }
     #app > .plaintext-section { animation: fadeUp 0.4s ease 0.06s both; }
@@ -248,6 +251,99 @@
     textarea[readonly] { cursor: default; opacity: 0.9; }
 
     textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+    /* ── Input fields ──────────────────────────────────── */
+    input[type="url"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.84em;
+      line-height: 1.7;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="url"]:focus,
+    input[type="text"]:focus {
+      border-left-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(198, 87, 42, 0.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      input[type="url"]:focus,
+      input[type="text"]:focus { box-shadow: 0 0 0 3px rgba(224, 145, 69, 0.1); }
+    }
+
+    input::placeholder { color: var(--muted); opacity: 0.6; }
+
+    /* ── Mode tabs ─────────────────────────────────────── */
+    .mode-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mode-tab {
+      font-family: var(--font-mono);
+      font-size: 0.78em;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.7em 1.2em;
+      border: none;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .mode-tab:hover { color: var(--heading); }
+    .mode-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Slug field ─────────────────────────────────────── */
+    .slug-field {
+      margin: 1.1em 0 1.6em;
+    }
+
+    .slug-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-family: var(--font-mono);
+      font-size: 0.84em;
+    }
+
+    .slug-prefix {
+      padding: 12px 0 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: var(--radius) 0 0 var(--radius);
+      color: var(--muted);
+      white-space: nowrap;
+      line-height: 1.7;
+    }
+
+    .slug-input-row input[type="text"] {
+      border-left: none;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .slug-input-row input[type="text"]:focus {
+      border-left: none;
+      box-shadow: 0 0 0 3px rgba(198, 87, 42, 0.08);
+    }
 
     /* ── Options grid ──────────────────────────────────── */
     .options {
@@ -530,6 +626,17 @@
     @media (max-width: 560px) {
       .options { grid-template-columns: 1fr; }
       .url-row { flex-direction: column; }
+      .slug-input-row { flex-direction: column; }
+      .slug-prefix {
+        border-right: 1px solid var(--border);
+        border-bottom: none;
+        border-radius: var(--radius) var(--radius) 0 0;
+        font-size: 0.78em;
+      }
+      .slug-input-row input[type="text"] {
+        border-top: none;
+        border-radius: 0 0 var(--radius) var(--radius);
+      }
       main { padding: 28px 16px 20px; }
       header { padding: 0 16px; }
       footer { padding: 1.5em 16px; }
@@ -541,7 +648,7 @@
 
 <header>
   <div class="header-inner">
-    <a class="title" href="/"><h2><span class="prompt-caret">&gt;</span> Secure Share</h2></a>
+    <a class="title" href="/"><h2><span class="prompt-caret">&gt;</span> Share</h2></a>
     <nav>
       <a href="https://sussition.com/blog">Blog</a>
     </nav>
@@ -600,12 +707,36 @@ async function decrypt(payload, keyStr) {
 
 const app = document.getElementById('app');
 
+let currentMode = 'secret';
+
 function route() {
   const path = location.pathname;
   const hash = location.hash;
   const m = path.match(/^\/s\/([a-zA-Z0-9_-]{22})$/);
   if (m) {
     renderReveal(m[1], hash);
+  } else {
+    renderCreateWithTabs(currentMode);
+  }
+}
+
+function switchMode(mode) {
+  currentMode = mode;
+  renderCreateWithTabs(mode);
+}
+
+function renderTabs(active) {
+  return `
+    <div class="mode-tabs">
+      <button class="mode-tab${active === 'secret' ? ' active' : ''}" onclick="switchMode('secret')">Share Secret</button>
+      <button class="mode-tab${active === 'link' ? ' active' : ''}" onclick="switchMode('link')">Shorten Link</button>
+    </div>
+  `;
+}
+
+function renderCreateWithTabs(mode) {
+  if (mode === 'link') {
+    renderLinkCreate();
   } else {
     renderCreate();
   }
@@ -641,6 +772,7 @@ const LOCK_LG_SVG = `<svg class="lock-icon" viewBox="0 0 24 24" fill="none" stro
 
 function renderCreate() {
   app.innerHTML = `
+    ${renderTabs('secret')}
     <h1>Share a secret</h1>
     <p class="subtitle">AES-256 encrypted in your browser. The decryption key lives only in the link — the server stores ciphertext and nothing else.</p>
 
@@ -731,6 +863,90 @@ function renderCreate() {
   document.getElementById('copyBtn').addEventListener('click', async () => {
     const btn = document.getElementById('copyBtn');
     await copyToClipboard(document.getElementById('shareUrl').textContent, btn, 'Copy');
+  });
+}
+
+// ─── Link shortener mode ─────────────────────────────────────────────────────
+
+const LINK_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+
+function renderLinkCreate() {
+  app.innerHTML = `
+    ${renderTabs('link')}
+    <h1>Shorten a link</h1>
+    <p class="subtitle">Create a short, memorable URL that redirects to any page. Optionally choose a custom slug.</p>
+
+    <label for="targetUrl">Destination URL</label>
+    <input type="url" id="targetUrl" placeholder="https://example.com/very/long/url" autofocus spellcheck="false">
+
+    <div class="slug-field">
+      <label for="customSlug">Custom slug (optional)</label>
+      <div class="slug-input-row">
+        <span class="slug-prefix">share.sussition.com/link/</span>
+        <input type="text" id="customSlug" placeholder="auto-generated" spellcheck="false">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="shortenBtn">
+      ${LINK_SVG} Shorten
+    </button>
+
+    <div class="result-box" id="linkResultBox">
+      <div class="result-label">Short link</div>
+      <div class="url-row">
+        <div class="url-display" id="shortUrl"></div>
+        <button class="btn btn-secondary" id="copyLinkBtn">Copy</button>
+      </div>
+      <p class="warning">This link is permanent and publicly accessible.</p>
+    </div>
+
+    <div class="status status-error" id="linkError"></div>
+  `;
+
+  document.getElementById('shortenBtn').addEventListener('click', async () => {
+    const urlInput = document.getElementById('targetUrl').value.trim();
+    if (!urlInput) {
+      showError('linkError', 'Please enter a URL to shorten.');
+      return;
+    }
+
+    const slugInput = document.getElementById('customSlug').value.trim();
+    const btn = document.getElementById('shortenBtn');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Shortening…';
+    hideError('linkError');
+
+    try {
+      const payload = { url: urlInput };
+      if (slugInput) payload.slug = slugInput;
+
+      const res = await fetch('/api/links', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        showError('linkError', apiErrorMsg(data.error));
+        return;
+      }
+
+      document.getElementById('shortUrl').textContent = data.short_url;
+      document.getElementById('linkResultBox').classList.add('visible');
+
+    } catch (e) {
+      showError('linkError', 'Something went wrong. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `${LINK_SVG} Shorten`;
+    }
+  });
+
+  document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('copyLinkBtn');
+    await copyToClipboard(document.getElementById('shortUrl').textContent, btn, 'Copy');
   });
 }
 
@@ -858,6 +1074,9 @@ function apiErrorMsg(code) {
     invalid_ttl:        'Invalid expiry.',
     not_found:          'Secret not found. It may have already been read or deleted.',
     expired:            'This secret has expired.',
+    invalid_url:        'Please enter a valid HTTP or HTTPS URL.',
+    invalid_slug:       'Slug must be 3\u201332 characters, alphanumeric and hyphens only.',
+    slug_taken:         'That custom slug is already taken. Try another.',
   };
   return msgs[code] || 'An unexpected error occurred.';
 }

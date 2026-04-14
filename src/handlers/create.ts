@@ -1,24 +1,19 @@
 import type { Env, CreateRequest, StoredSecret } from '../types';
 import { generateId } from '../crypto';
-import { securityHeaders, checkRateLimit } from '../security';
+import { jsonError, jsonOk, checkRateLimit } from '../security';
+import { SECRET_PREFIX } from '../kv';
 
 export async function handleCreate(request: Request, env: Env): Promise<Response> {
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   if (!(await checkRateLimit(ip, env, 'create', 10))) {
-    return new Response(JSON.stringify({ error: 'rate_limited' }), {
-      status: 429,
-      headers: securityHeaders(),
-    });
+    return jsonError('rate_limited', 429);
   }
 
   let body: CreateRequest;
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'invalid_json' }), {
-      status: 400,
-      headers: securityHeaders(),
-    });
+    return jsonError('invalid_json', 400);
   }
 
   const maxPayload = parseInt(env.MAX_PAYLOAD_BYTES);
@@ -26,24 +21,15 @@ export async function handleCreate(request: Request, env: Env): Promise<Response
   const maxViews = parseInt(env.MAX_VIEWS);
 
   if (!body.c || typeof body.c !== 'string' || body.c.length > maxPayload) {
-    return new Response(JSON.stringify({ error: 'invalid_ciphertext' }), {
-      status: 400,
-      headers: securityHeaders(),
-    });
+    return jsonError('invalid_ciphertext', 400);
   }
 
   if (!Number.isInteger(body.v) || (body.v !== -1 && (body.v < 1 || body.v > maxViews))) {
-    return new Response(JSON.stringify({ error: 'invalid_views' }), {
-      status: 400,
-      headers: securityHeaders(),
-    });
+    return jsonError('invalid_views', 400);
   }
 
   if (!Number.isInteger(body.ttl) || body.ttl < 300 || body.ttl > maxTtl) {
-    return new Response(JSON.stringify({ error: 'invalid_ttl' }), {
-      status: 400,
-      headers: securityHeaders(),
-    });
+    return jsonError('invalid_ttl', 400);
   }
 
   const id = generateId();
@@ -55,12 +41,9 @@ export async function handleCreate(request: Request, env: Env): Promise<Response
     e: expiresAt,
   };
 
-  await env.SECRETS.put(`secret:${id}`, JSON.stringify(stored), {
+  await env.SECRETS.put(`${SECRET_PREFIX}${id}`, JSON.stringify(stored), {
     expirationTtl: body.ttl,
   });
 
-  return new Response(JSON.stringify({ id, expires: expiresAt }), {
-    status: 201,
-    headers: securityHeaders(),
-  });
+  return jsonOk({ id, expires: expiresAt }, 201);
 }
