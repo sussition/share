@@ -19,6 +19,14 @@ export function htmlHeaders(): HeadersInit {
   return { ...headers, 'Content-Type': 'text/html; charset=utf-8', 'CF-No-Insights': '1' };
 }
 
+export function jsonError(error: string, status: number): Response {
+  return new Response(JSON.stringify({ error }), { status, headers: securityHeaders() });
+}
+
+export function jsonOk(body: object, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: securityHeaders() });
+}
+
 export async function checkRateLimit(
   ip: string,
   env: Env,

@@ -1,21 +1,16 @@
 import type { Env } from '../types';
-import { securityHeaders, checkRateLimit } from '../security';
+import { jsonError, jsonOk, checkRateLimit } from '../security';
 import { getSecret } from '../kv';
 
 export async function handleRetrieve(id: string, env: Env, request: Request): Promise<Response> {
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   if (!(await checkRateLimit(ip, env, 'retrieve', 30))) {
-    return new Response(JSON.stringify({ error: 'rate_limited' }), {
-      status: 429, headers: securityHeaders(),
-    });
+    return jsonError('rate_limited', 429);
   }
 
   const result = await getSecret(id, env);
   if (!result.ok) {
-    const error = result.status === 410 ? 'expired' : 'not_found';
-    return new Response(JSON.stringify({ error }), {
-      status: result.status, headers: securityHeaders(),
-    });
+    return jsonError(result.status === 410 ? 'expired' : 'not_found', result.status);
   }
 
   const { stored, key } = result;
@@ -35,7 +30,5 @@ export async function handleRetrieve(id: string, env: Env, request: Request): Pr
     remaining = -1;
   }
 
-  return new Response(JSON.stringify({ c: stored.c, remaining }), {
-    status: 200, headers: securityHeaders(),
-  });
+  return jsonOk({ c: stored.c, remaining });
 }
